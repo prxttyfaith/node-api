@@ -21,5 +21,15 @@ router.post('/', async function(req, res, next) {
     next(err);
   }
 });
+
+/* PUT task */
+router.put('/:id', async function(req, res, next) {
+  try {
+    res.json(await toDoList.update(req.params.id, req.body));
+  } catch (err) {
+    console.error(`Error while updating task`, err.message);
+    next(err);
+  }
+});
  
 module.exports = router;

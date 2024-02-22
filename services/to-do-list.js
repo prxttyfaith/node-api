@@ -31,8 +31,27 @@ async function create(task){
 
   return {message};
 }
+
+//PUT
+async function update(id, task){
+  const result = await db.query(
+    `UPDATE tasks
+    SET name='${task.name}'
+    WHERE id=${id}`
+  );
+
+  let message = 'Error in updating task';
+
+  if (result.affectedRows) {
+    message = 'task updated successfully';
+  }
+
+  return {message};
+}
+
 module.exports = {
   getMultiple,
-  create
+  create,
+  update
 }
 
