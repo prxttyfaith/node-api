@@ -49,9 +49,26 @@ async function update(id, task){
   return {message};
 }
 
+//DELETE
+async function remove(id){
+  const result = await db.query(
+    `DELETE FROM tasks
+    WHERE id=${id}`
+  );
+
+  let message = 'Error in deleting task';
+
+  if (result.affectedRows) {
+    message = 'task deleted successfully';
+  }
+
+  return {message};
+}
+
 module.exports = {
   getMultiple,
   create,
-  update
+  update,
+  remove
 }
 
