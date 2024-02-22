@@ -1,7 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-
+//GET
 async function getMultiple(page = 1){
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
@@ -16,7 +16,23 @@ async function getMultiple(page = 1){
     meta
   }
 }
+//POST
+async function create(task){
+  const result = await db.query(
+    `INSERT INTO tasks (name) VALUES 
+    ('${task.name}')`
+  );
 
-module.exports = {
-  getMultiple
+  let message = 'Error in creating task';
+
+  if (result.affectedRows) {
+    message = 'task created successfully';
+  }
+
+  return {message};
 }
+module.exports = {
+  getMultiple,
+  create
+}
+
