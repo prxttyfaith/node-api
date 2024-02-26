@@ -1,12 +1,13 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+
 //GET
-async function getMultiple(page = 1){
-  const offset = helper.getOffset(page, config.listPerPage);
+async function getMultiple(page = 1) {
+  // const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT id, name
-    FROM tasks LIMIT ${offset},${config.listPerPage}`
+    FROM tasks` //LIMIT ${offset},${config.listPerPage}`
   );
   const data = helper.emptyOrRows(rows);
   const meta = {page};
@@ -16,6 +17,7 @@ async function getMultiple(page = 1){
     meta
   }
 }
+
 //POST
 async function create(task){
   const result = await db.query(

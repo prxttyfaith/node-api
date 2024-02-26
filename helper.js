@@ -1,6 +1,6 @@
-function getOffset(currentPage = 1, listPerPage) {
-    return (currentPage - 1) * [listPerPage];
-  }
+// function getOffset(currentPage = 1, listPerPage) {
+//     return (currentPage - 1) * [listPerPage];
+//   }
   
   function emptyOrRows(rows) {
     if (!rows) {
@@ -10,6 +10,6 @@ function getOffset(currentPage = 1, listPerPage) {
   }
   
   module.exports = {
-    getOffset,
+    // getOffset,
     emptyOrRows
   }

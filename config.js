@@ -5,7 +5,7 @@ const config = {
       host: "127.0.0.1",
       user: "root",
       password: "pretty.1",
-      database: "to-do-list",
+      database: "event_driven",
       connectTimeout: 60000
     },
     listPerPage: 10,
