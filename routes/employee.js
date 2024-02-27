@@ -12,15 +12,15 @@ router.get('/', async function(req, res, next) {
     }
   });
 
-  /* GET assigned_designation. */
-  router.get('/', async function(req, res, next) {
-    try {
-      res.json(await employee.getAssignedDesignation(req.query.page));
-    } catch (err) {
-      console.error(`Error while getting assigned designation `, err.message);
-      next(err);
-    }
-  });
+  // /* GET assigned_designation. */
+  // router.get('/', async function(req, res, next) {
+  //   try {
+  //     res.json(await employee.getAssignedDesignation(req.query.page));
+  //   } catch (err) {
+  //     console.error(`Error while getting assigned designation `, err.message);
+  //     next(err);
+  //   }
+  // });
   
 
 /* POST employee */
