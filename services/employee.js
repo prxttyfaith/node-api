@@ -4,19 +4,31 @@ const config = require('../config');
 
 
 //GET ALL EMPLOYEE
-async function getEmployee(page = 1){
+async function getEmployee(){
     const rows = await db.query(
       `SELECT *
       FROM employee`
     );
     const data = helper.emptyOrRows(rows);
-    const meta = {page};
-  
     return {
-      data,
-      meta
+      data
     }
   }
+  
+//Get assigned_designation
+async function getAssignedDesignation(){
+  const rows = await db.query(
+    `SELECT *
+    FROM assigned_designation`
+  );
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+  return {
+    data,
+    meta
+  }
+}
+
 
 //POST
 async function createEmployee(employee) {
