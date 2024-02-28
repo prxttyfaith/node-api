@@ -6,9 +6,11 @@ const config = require('../config');
 async function getEmployee() {
   try {
     const query = `
-          SELECT e.*, ad.designation_id, ad.employee_type, ad.status
-          FROM employee e
-          LEFT JOIN assigned_designation ad ON e.id = ad.employee_id`;
+      SELECT e.*, ad.employee_type, ad.status, ad.designation_id, des.designation_name, d.department_name
+      FROM employee e
+      LEFT JOIN assigned_designation ad ON e.id = ad.employee_id
+      LEFT JOIN designation des ON ad.designation_id = des.id
+      LEFT JOIN department d ON des.department_id = d.id`;
 
     const rows = await db.query(query);
     const data = helper.emptyOrRows(rows);
