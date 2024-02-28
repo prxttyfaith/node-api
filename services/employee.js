@@ -2,7 +2,6 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-
 //GET ALL EMPLOYEE
 async function getEmployee() {
   try {
@@ -80,37 +79,80 @@ async function createEmployee(employee) {
 }
 
 //SET
-async function updateEmployee(id, employee){
-    const result = await db.query(
-      `UPDATE employee
-      SET first_name='${employee.first_name}', middle_name='${employee.middle_name}', last_name='${employee.last_name}', street_address='${employee.street_address}', city='${employee.city}', state='${employee.state}', country='${employee.country}', zip_code='${employee.zip_code}', designation='${employee.designation}', department='${employee.department}', type='${employee.type}', status='${employee.status}'
-      WHERE id=${id}`
-    );
-  
+async function updateEmployee(employeeId, updatedEmployee) {
+  try {
+    const {first_name, middle_name, last_name, birthdate, address_line, city, state, country, zip_code, designation_id, employee_type, status } = updatedEmployee;
+
+    const employeeUpdateQuery = `
+    UPDATE employee
+    set first_name = ?, middle_name = ?, last_name = ?, birthdate = ?, address_line = ?, city = ?, state = ?, country = ?, zip_code = ? 
+    WHERE id = ${employeeId}`;
+
+    const employeeUpdateValues = [
+      first_name,
+      middle_name,
+      last_name,
+      birthdate,
+      address_line,
+      city,
+      state,
+      country,
+      zip_code
+    ];
+
+    const employeeUpdateResult = await db.query(employeeUpdateQuery, employeeUpdateValues);
+
+    const designationUpdateQuery = `
+    UPDATE assigned_designation
+    set designation_id = ?, employee_type = ?, status = ?
+    WHERE employee_id = ${employeeId}`;
+
+    const designationUpdateValues = [
+      designation_id,
+      employee_type,
+      status
+    ];
+
+    const designationUpdateResult = await db.query(designationUpdateQuery, designationUpdateValues);
+
     let message = 'Error in updating employee';
-  
-    if (result.affectedRows) {
-      message = 'employee updated successfully';
+    if (employeeUpdateResult.affectedRows && designationUpdateResult.affectedRows) {
+      message = 'Employee updated successfully';
     }
-  
-    return {message};
+
+    return { message };
   }
+  catch (error) {
+    console.error("Error updating employee:", error);
+    throw error;
+  }
+}
 
 //DELETE
-async function removeEmployee(id){
-    const result = await db.query(
+async function removeEmployee(employeeId) {
+  try {
+    const deleteEmployee = await db.query(
       `DELETE FROM employee
-      WHERE id=${id}`
+     WHERE id = ?`, [employeeId]
     );
-  
+
+    const deleteDesignation = await db.query(
+      `DELETE FROM assigned_designation
+      WHERE employee_id = ?`, [employeeId]
+    );
+
     let message = 'Error in deleting employee';
-  
-    if (result.affectedRows) {
-      message = 'employee deleted successfully';
+    if (deleteEmployee.affectedRows > 0) {
+      message = 'employee record deleted successfully';
     }
-  
+
     return {message};
   }
+  catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
+}
 
 module.exports = {
     getEmployee,
