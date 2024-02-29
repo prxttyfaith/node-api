@@ -96,9 +96,22 @@ async function createEmployee(employee) {
 }
 
 //SET
-async function updateEmployee(employeeId, updatedEmployee) {
+async function updateEmployee(employeeId, employee) {
   try {
-    const { first_name, middle_name, last_name, birthdate, address_line, city, state, country, zip_code, designation_id, employee_type, status } = updatedEmployee;
+    const employeeData = {
+      first_name: employee.first_name || null,
+      middle_name: employee.middle_name || null,
+      last_name: employee.last_name || null,
+      birthdate: employee.birthdate || null,
+      address_line: employee.address_line || null,
+      city: employee.city || null,
+      state: employee.state || null,
+      country: employee.country || null,
+      zip_code: employee.zip_code || null,
+      designation_id: employee.designation_id || null,
+      employee_type: employee.employee_type || null,
+      status: employee.status || null
+    };
 
     const employeeUpdateQuery = `
     UPDATE employee
@@ -106,15 +119,15 @@ async function updateEmployee(employeeId, updatedEmployee) {
     WHERE id = ${employeeId}`;
 
     const employeeUpdateValues = [
-      first_name,
-      middle_name,
-      last_name,
-      birthdate,
-      address_line,
-      city,
-      state,
-      country,
-      zip_code
+      employeeData.first_name,
+      employeeData.middle_name,
+      employeeData.last_name,
+      employeeData.birthdate,
+      employeeData.address_line,
+      employeeData.city,
+      employeeData.state,
+      employeeData.country,
+      employeeData.zip_code
     ];
 
     const employeeUpdateResult = await db.query(employeeUpdateQuery, employeeUpdateValues);
@@ -125,9 +138,9 @@ async function updateEmployee(employeeId, updatedEmployee) {
     WHERE employee_id = ${employeeId}`;
 
     const designationUpdateValues = [
-      designation_id,
-      employee_type,
-      status
+      employeeData.designation_id,
+      employeeData.employee_type,
+      employeeData.status
     ];
 
     const designationUpdateResult = await db.query(designationUpdateQuery, designationUpdateValues);
