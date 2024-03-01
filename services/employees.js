@@ -3,7 +3,7 @@ const helper = require('../helper');
 const config = require('../config');
 
 //GET ALL EMPLOYEE
-async function getEmployee() {
+async function getEmployees() {
   try {
     const query = `
       SELECT e.*, ad.employee_type, ad.status, ad.designation_id, des.designation_name, d.department_name
@@ -185,7 +185,7 @@ async function removeEmployee(employeeId) {
 }
 
 module.exports = {
-  getEmployee,
+  getEmployees,
   createEmployee,
   updateEmployee,
   removeEmployee
