@@ -144,6 +144,7 @@ async function updateEmployee(employeeId, employee) {
     ];
 
     const designationUpdateResult = await db.query(designationUpdateQuery, designationUpdateValues);
+    console.log('designationUpdateResult:', designationUpdateResult);
 
     let message = 'Error in updating employee';
     if (employeeUpdateResult.affectedRows && designationUpdateResult.affectedRows) {

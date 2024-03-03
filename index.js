@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 app.use("/to-do-list", toDoListRouter);
 app.use("/employees", employeesRouter);
 app.use("/employee-designations", employeeDesignationsRouter);
+
 /* Error handler middleware */
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
