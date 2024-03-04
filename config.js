@@ -1,12 +1,15 @@
+require('dotenv').config();
 
 const config = {
     db: {
-      /* don't expose password or any sensitive info, done only for demo */
-      host: "127.0.0.1",
-      user: "root",
-      password: "pretty.1",
-      database: "event_driven",
-      connectTimeout: 60000
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+      connectTimeout: 60000,
+      connectionLimit: 10,
+      waitForConnections: true,
+      queueLimit: 0,
     },
     listPerPage: 10,
   };

@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 3000;
+const host = process.env.API_HOST || "localhost";
+const port = process.env.PORT || 3000;
 const toDoListRouter = require('./routes/to-do-list');
 const employeesRouter = require('./routes/employees');
 const employeeDesignationsRouter = require('./routes/employee-designations');
@@ -28,6 +30,6 @@ app.use((err, req, res, next) => {
   return;
 });
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Node API is running at: ${host}:${port}`);
 });
 
