@@ -7,6 +7,8 @@ const port = process.env.PORT || 3000;
 const toDoListRouter = require('./routes/to-do-list');
 const employeesRouter = require('./routes/employees');
 const employeeDesignationsRouter = require('./routes/employee-designations');
+const leaveRequestsRouter = require('./routes/employee-leave-requests');
+const employeeSignatoriesRouter = require('./routes/employee-signatories');
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +23,9 @@ app.get("/", (req, res) => {
 app.use("/to-do-list", toDoListRouter);
 app.use("/employees", employeesRouter);
 app.use("/employee-designations", employeeDesignationsRouter);
+app.use("/employee-leave-requests", leaveRequestsRouter);
+app.use("/employee-signatories", employeeSignatoriesRouter);
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
