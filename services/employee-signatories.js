@@ -39,25 +39,16 @@ async function getEmployeeAddSignatory() {
     }
 }
 async function createEmployeeSignatory(employeeSignatory) {
-    try {
-        const result = await db.query(
-          `INSERT INTO employee_signatories 
-          (employee_id, signatory_id, signatory_status) 
-          VALUES 
-          ('${employeeSignatory.employee_id}', '${employeeSignatory.signatory_id}'), '${employeeSignatory.signatory_status}`
-        );
-    
-        let message = "Error in creating employee signatory";
-    
-        if (result.affectedRows) {
-          message = "Employee signatory created successfully";
-        }
-    
-        return { message };
-      } catch (error) {
-        console.error("Error creating employee signatory:", error);
-        throw error;
-      }
+    const result = await db.query(
+        `INSERT INTO employee_signatories (employee_id, signatory, signatory_status) VALUES
+        ('${employeeSignatory.employee_id}', '${employeeSignatory.signatory}', '${employeeSignatory.signatory_status}')`
+    );
+    let message = 'Error in creating employee signatory';
+
+    if (result.affectedRows) {
+        message = 'Employee signatory created successfully';
+    }
+    return {message};
 }
 
 module.exports = {

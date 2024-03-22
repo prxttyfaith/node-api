@@ -28,7 +28,7 @@ async function getLeaveRequests() {
 async function createLeaveRequest(leaveRequest) {
   try {
     const result = await db.query(
-      `INSERT INTO leave_request 
+      `INSERT INTO employee_leave_requests 
       (employee_id, type, start_date, end_date, status) 
       VALUES 
       ('${leaveRequest.employee_id}', '${leaveRequest.type}', '${leaveRequest.start_date}', '${leaveRequest.end_date}', '${leaveRequest.status}')`
