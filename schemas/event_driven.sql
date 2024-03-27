@@ -51,3 +51,27 @@ CREATE TABLE `tasks` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create syntax for TABLE 'employee_leave_requests'
+CREATE TABLE `employee_leave_requests` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `employee_leave_requests_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create syntax for TABLE 'employee_signatories'
+CREATE TABLE `employee_signatories` (
+  `employee_id` int NOT NULL,
+  `signatory` int NOT NULL,
+  `signatory_status` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`employee_id`),
+  KEY `signatory` (`signatory`),
+  CONSTRAINT `employee_signatories_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
+  CONSTRAINT `employee_signatories_ibfk_2` FOREIGN KEY (`signatory`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
