@@ -84,10 +84,30 @@ async function createEmployeeSignatory(employeeSignatory) {
     }
 }
 
+async function updateEmployeeSignatory(e_id, employeeSignatory) {
+    try {
+        const result = await db.query(`
+            UPDATE employee_signatories
+            SET signatory = ?, signatory_status = ?
+            WHERE employee_id = ?`, [employeeSignatory.signatory, employeeSignatory.signatory_status, e_id]);
+
+        if (result.affectedRows) {
+            return {
+                message: `Successfully updated signatory for employee ID: ${e_id}.`
+            };
+        }
+
+        throw new Error('Failed to update employee signatory. Please try again later.');
+    } catch (error) {
+        throw new Error('Error encountered while updating the employee signatory. Please try again later.');
+    }
+}
+
 
 
 module.exports = {
     getEmployeeSignatories,
     createEmployeeSignatory,
-    getEmployeeAddSignatory
+    getEmployeeAddSignatory,
+    updateEmployeeSignatory
 }

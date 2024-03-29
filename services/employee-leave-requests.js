@@ -51,7 +51,7 @@ async function createLeaveRequest(leaveRequest) {
 
     if (result.affectedRows) {
       return {
-          message: `${getEmployeeName.employee_name} leave request has been successfully submitted. Please await approval.`
+          message: `${getEmployeeName.employee_name} leave request was submitted successfully. Please await for approval.`
       };
   }
 
@@ -90,6 +90,9 @@ async function updateLeaveRequest(id, leaveRequestData) {
     throw error;
   }
 }
+
+
+
 
 module.exports = {
   getLeaveRequests,
