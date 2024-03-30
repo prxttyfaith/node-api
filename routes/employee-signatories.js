@@ -31,12 +31,21 @@ router.post('/', async function(req, res, next) {
       next(err);
     }
 });
-
+//update
 router.put('/:id', async function(req, res, next) {
     try {
       res.json(await employeeSignatories.updateEmployeeSignatory(req.params.id, req.body));
     } catch (err) {
       console.error(`Error while updating employee signatory`, err.message);
+      next(err);
+    }
+});
+//delete
+router.delete('/:id', async function(req, res, next) {
+    try {
+      res.json(await employeeSignatories.deleteEmployeeSignatory(req.params.id));
+    } catch (err) {
+      console.error(`Error while deleting employee signatory`, err.message);
       next(err);
     }
 });

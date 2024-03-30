@@ -103,11 +103,31 @@ async function updateEmployeeSignatory(e_id, employeeSignatory) {
     }
 }
 
+async function deleteEmployeeSignatory(e_id) {
+    try {
+        const result = await db.query(`
+            DELETE FROM employee_signatories
+            WHERE employee_id = ?`, [e_id]);
+
+        if (result.affectedRows) {
+            return {
+                message: `Successfully removed signatory for employee ID: ${e_id}.`
+            };
+        }
+
+        throw new Error('Failed to remove employee signatory. Please try again later.');
+    } catch (error) {
+        throw new Error('Error encountered while removing the employee signatory. Please try again later.');
+    }
+}
+
 
 
 module.exports = {
     getEmployeeSignatories,
     createEmployeeSignatory,
     getEmployeeAddSignatory,
-    updateEmployeeSignatory
+    updateEmployeeSignatory,
+    deleteEmployeeSignatory
+    
 }
