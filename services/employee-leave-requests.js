@@ -51,7 +51,7 @@ async function createLeaveRequest(leaveRequest) {
 
     if (result.affectedRows) {
       return {
-          message: `${getEmployeeName.employee_name} leave request was submitted successfully. Please await for approval.`
+          message: `${getEmployeeName.employee_name} leave request has been successfully submitted. Please await for approval.`
       };
   }
 
@@ -81,7 +81,7 @@ async function updateLeaveRequest(id, leaveRequestData) {
 
     let message = 'Error in updating leave request status.';
     if (leaveRequestUpdateResult.affectedRows) {
-      message = 'Leave request status has been updated successfully.';
+      message = 'Leave request status has been successfully updated.';
     }
     return { message };
   }
