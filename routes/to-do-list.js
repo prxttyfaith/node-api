@@ -10,7 +10,7 @@ router.get('/', async function(req, res, next) {
     console.error(`Error while getting task `, err.message);
     next(err);
   }
-});
+}); 
 
 /* POST task */
 router.post('/', async function(req, res, next) {

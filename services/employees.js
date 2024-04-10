@@ -6,7 +6,7 @@ const config = require('../config');
 async function getEmployees() {
   try {
     const query = `
-      SELECT e.*, ad.employee_type, ad.status, ad.designation_id, des.designation_name, d.department_name
+      SELECT e.*, ad.employee_type, ad.status, ad.gross_pay, ad.designation_id, des.designation_name, d.department_name
       FROM employee e
       LEFT JOIN assigned_designation ad ON e.id = ad.employee_id
       LEFT JOIN designation des ON ad.designation_id = des.id
@@ -39,7 +39,8 @@ async function createEmployee(employee) {
       zip_code: employee.zip_code || null,
       designation_id: employee.designation_id || null,
       employee_type: employee.employee_type || null,
-      status: employee.status || null
+      status: employee.status || null,
+      gross_pay: employee.gross_pay || null
     };
 
     // Insert into employee table
@@ -69,14 +70,15 @@ async function createEmployee(employee) {
     // Insert into assigned_designation table
     const designationQuery = `
           INSERT INTO assigned_designation 
-          (employee_id, designation_id, employee_type, status) 
-          VALUES (?, ?, ?, ?)`;
+          (employee_id, designation_id, employee_type, status, gross_pay) 
+          VALUES (?, ?, ?, ?, ?)`;
 
     const designationValues = [
       employeeId,
       employeeData.designation_id,
       employeeData.employee_type,
-      employeeData.status
+      employeeData.status,
+      employeeData.gross_pay
     ];
 
     // Finally, execute the query to insert the assigned designation
@@ -110,7 +112,8 @@ async function updateEmployee(employeeId, employee) {
       zip_code: employee.zip_code || null,
       designation_id: employee.designation_id || null,
       employee_type: employee.employee_type || null,
-      status: employee.status || null
+      status: employee.status || null,
+      gross_pay: employee.gross_pay || null
     };
 
     const employeeUpdateQuery = `
@@ -134,13 +137,14 @@ async function updateEmployee(employeeId, employee) {
 
     const designationUpdateQuery = `
     UPDATE assigned_designation
-    set designation_id = ?, employee_type = ?, status = ?
+    set designation_id = ?, employee_type = ?, status = ?, gross_pay = ?
     WHERE employee_id = ${employeeId}`;
 
     const designationUpdateValues = [
       employeeData.designation_id,
       employeeData.employee_type,
-      employeeData.status
+      employeeData.status,
+      employeeData.gross_pay
     ];
 
     const designationUpdateResult = await db.query(designationUpdateQuery, designationUpdateValues);
