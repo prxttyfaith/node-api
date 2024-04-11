@@ -9,6 +9,7 @@ const employeesRouter = require('./routes/employees');
 const employeeDesignationsRouter = require('./routes/employee-designations');
 const leaveRequestsRouter = require('./routes/employee-leave-requests');
 const employeeSignatoriesRouter = require('./routes/employee-signatories');
+const employeePayrollsRouter = require('./routes/employee-payrolls');
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use("/employees", employeesRouter);
 app.use("/employee-designations", employeeDesignationsRouter);
 app.use("/employee-leave-requests", leaveRequestsRouter);
 app.use("/employee-signatories", employeeSignatoriesRouter);
+app.use("/employee-payrolls", employeePayrollsRouter);
 
 
 /* Error handler middleware */
