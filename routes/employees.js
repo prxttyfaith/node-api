@@ -11,6 +11,15 @@ router.get('/', async function(req, res, next) {
       next(err);
     }
   });
+  router.get('/grosspay', async function(req, res, next) {
+    try {
+      res.json(await employees.getEmployeeGrossPay(req.query.page));
+    } catch (err) {
+      console.error(`Error while getting employee gross pay `, err.message);
+      next(err);
+    }
+  });
+
   
 
 /* POST employee */

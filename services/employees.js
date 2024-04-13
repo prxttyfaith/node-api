@@ -24,6 +24,27 @@ async function getEmployees() {
   }
 }
 
+//GET EMPLOYEE(concat name) AND GROSS PAY
+async function getEmployeeGrossPay() {
+  try {
+    const query = `
+      SELECT e.id AS employee_id, CONCAT(e.first_name, ' ', e.last_name) AS employee_name, ad.gross_pay
+      FROM employee e
+      LEFT JOIN assigned_designation ad ON e.id = ad.employee_id`;
+
+    const rows = await db.query(query);
+    const data = helper.emptyOrRows(rows);
+
+    return {
+      data
+    };
+  } catch (error) {
+    console.error("Error fetching employee data:", error);
+    throw error;
+  }
+}
+
+
 //POST
 async function createEmployee(employee) {
   try {
@@ -193,5 +214,6 @@ module.exports = {
   getEmployees,
   createEmployee,
   updateEmployee,
-  removeEmployee
+  removeEmployee,
+  getEmployeeGrossPay,
 }
