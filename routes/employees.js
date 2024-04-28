@@ -11,11 +11,11 @@ router.get('/', async function(req, res, next) {
       next(err);
     }
   });
-  router.get('/grosspay', async function(req, res, next) {
+  router.get('/employee-pays', async function(req, res, next) {
     try {
-      res.json(await employees.getEmployeeGrossPay(req.query.page));
+      res.json(await employees.getEmployeePays(req.query.page));
     } catch (err) {
-      console.error(`Error while getting employee gross pay `, err.message);
+      console.error(`Error while getting employee pays `, err.message);
       next(err);
     }
   });
@@ -27,7 +27,7 @@ router.post('/', async function(req, res, next) {
     try {
       res.json(await employees.createEmployee(req.body));
     } catch (err) {
-      console.error(`Error while creating employee`, err.message);
+      console.error(`Error while adding employee`, err.message);
       next(err);
     }
   });
