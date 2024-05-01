@@ -2,42 +2,70 @@ const express = require('express');
 const router = express.Router();
 const employeePayrolls = require('../services/employee-payrolls');
 
-//POST employee payroll earnings
+
+// Endpoint: /employee-payrolls/earnings
+// Method: POST
 router.post('/earnings', async function(req, res, next) {
     try {
-        res.json(await employeePayrolls.createEarnings(req.body));
+        res.json(await employeePayrolls.addEmployeeEarnings(req.body));
     } catch (err) {
-        console.error(`Error while creating employee earnings`, err.message);
+        console.error(`Error while adding employee earnings`, err.message);
         next(err);
     }
 });
-
-//POST employee payroll deductions
+// Endpoint: /employee-payrolls/deductions
+// Method: POST
 router.post('/deductions', async function(req, res, next) {
     try {
-        res.json(await employeePayrolls.createDeductions(req.body));
+        res.json(await employeePayrolls.addEmployeeDeductions(req.body));
     } catch (err) {
-        console.error(`Error while creating employee deductions`, err.message);
+        console.error(`Error while adding employee deductions`, err.message);
         next(err);
     }
 });
 
-//POST employee payroll
+// Endpoint: /employee-payrolls
+// Method: POST
 router.post('/', async function(req, res, next) {
     try {
         res.json(await employeePayrolls.createEmployeePayroll(req.body));
     } catch (err) {
-        console.error(`Error while creating employee payroll`, err.message);
+        console.error(`Error while creating employees payroll`, err.message);
         next(err);
     }
 });
 
-//GET employee payroll
-router.get('/', async function(req, res, next) {
+// Endpoint: /employee-payrolls/employees
+// Method: GET
+
+router.get('/employees', async (req, res) => {
+    const pay_period = req.query.pay_period;
+    const pay_day = req.query.pay_day;
+    if (pay_period && pay_day) {
+        try {
+            const result = await employeePayrolls.getPayrollEmployees(pay_period, pay_day);
+            res.status(200).json(result);
+        } catch (error) {
+            console.error("Error fetching employee name list for payslip:", error);
+            res.status(500).json({ error: "Error fetching employee name list for payslip" });
+        }
+    } else {
+        res.status(400).json({ error: "Missing required parameters" });
+    }
+});
+
+// Endpoint: /employee-payrolls/payslip
+// Method: GET
+
+router.get('/payslip', async function(req, res, next) {
     try {
-        res.json(await employeePayrolls.getEmployeePayrolls());
+        const { employee_id, pay_period, pay_day } = req.query;
+        if (!employee_id || !pay_period || !pay_day) {
+            return res.status(400).json({ error: 'Missing employee_id, pay_period or pay_day parameter' });
+        }
+        res.json(await employeePayrolls.getPayrollEmployeePayslip(employee_id, pay_period, pay_day));
     } catch (err) {
-        console.error(`Error while getting employee payrolls `, err.message);
+        console.error(`Error while fetching employee payslip`, err.message);
         next(err);
     }
 });
