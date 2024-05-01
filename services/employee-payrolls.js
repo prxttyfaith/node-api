@@ -94,12 +94,14 @@ async function getPayrollEmployees(pay_period, pay_day) {
         const query = `
         SELECT ep.employee_id, 
         CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
-        d.designation_name AS position,
+        des.designation_name AS designation,
+        dep.department_name AS department,
         ad.salary AS monthly_salary
         FROM employee_payrolls AS ep
         LEFT JOIN employee AS e ON ep.employee_id = e.id
         LEFT JOIN assigned_designation AS ad ON e.id = ad.employee_id
-        LEFT JOIN designation AS d ON ad.designation_id = d.id
+        LEFT JOIN designation AS des ON ad.designation_id = des.id
+        LEFT JOIN department AS dep ON des.department_id = dep.id
         WHERE ep.pay_period = ?
         AND ep.pay_day = ?;`;
 
@@ -123,6 +125,10 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
         const query = `
         SELECT ep.employee_id, 
         CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+        des.designation_name AS designation,
+        dep.department_name AS department,
+        ad.employee_type AS employee_type,
+        ad.status AS status,
         ep.pay_period,
         ep.start_date,
         ep.end_date,
@@ -136,6 +142,9 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
         ep.wh_tax
         FROM employee_payrolls AS ep
         LEFT JOIN employee AS e ON ep.employee_id = e.id
+        LEFT JOIN assigned_designation AS ad ON e.id = ad.employee_id
+        LEFT JOIN designation AS des ON ad.designation_id = des.id
+        LEFT JOIN department AS dep ON des.department_id = dep.id
         WHERE ep.employee_id = ? 
         AND ep.pay_period = ? 
         AND ep.pay_day = ?;`;
