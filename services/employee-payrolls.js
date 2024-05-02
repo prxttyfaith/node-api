@@ -54,23 +54,33 @@ async function createEmployeePayroll(payrolls) {
         // This is for semi-monthly payroll only, we will update this if we will add other payroll types.
         const insertQuery = `
             INSERT INTO employee_payrolls (employee_id, pay_period, start_date, end_date, pay_day, basic_pay, pagibig, philhealth, sss, wh_tax, total_earnings, total_deductions)
-            SELECT ad.employee_id,
-            ? AS pay_period,
-            ? AS start_date,
-            ? AS end_date,
-            ? AS pay_day,
-            ad.salary / 2 AS basic_pay,
-            ad.pagibig / 2 AS pagibig,
-            ad.philhealth / 2 AS philhealth,
-            ad.sss / 2 AS sss,
-            ad.wh_tax / 2 AS wh_tax,
-            COALESCE(SUM(epe.amount), 0) AS total_earnings,
-            COALESCE(SUM(epd.amount), 0) AS total_deductions
-            FROM assigned_designation AS ad
-            LEFT JOIN employee_payroll_earnings AS epe ON ad.employee_id = epe.employee_id AND epe.date BETWEEN ? AND ?
-            LEFT JOIN employee_payroll_deductions AS epd ON ad.employee_id = epd.employee_id AND epd.date BETWEEN ? AND ?
-            WHERE ad.status = 'Active'
-            GROUP BY ad.employee_id;
+            SELECT 
+                ad.employee_id,
+                ? AS pay_period,
+                ? AS start_date,
+                ? AS end_date,
+                ? AS pay_day,
+                ad.salary / 2 AS basic_pay,
+                ad.pagibig / 2 AS pagibig,
+                ad.philhealth / 2 AS philhealth,
+                ad.sss / 2 AS sss,
+                ad.wh_tax / 2 AS wh_tax,
+                COALESCE(epe.total_earnings, 0) AS total_earnings,
+                COALESCE(epd.total_deductions, 0) AS total_deductions
+            FROM 
+                assigned_designation AS ad
+            LEFT JOIN 
+                (SELECT employee_id, SUM(amount) AS total_earnings 
+                FROM employee_payroll_earnings 
+                WHERE date BETWEEN ? AND ? 
+                GROUP BY employee_id) AS epe ON ad.employee_id = epe.employee_id
+            LEFT JOIN 
+                (SELECT employee_id, SUM(amount) AS total_deductions 
+                FROM employee_payroll_deductions 
+                WHERE date BETWEEN ? AND ? 
+                GROUP BY employee_id) AS epd ON ad.employee_id = epd.employee_id
+            WHERE 
+                ad.status = 'Active';
         `;
         
         const result = await db.query(insertQuery, [payPeriod, startDate, endDate, payDay, startDate, endDate, startDate, endDate]);
@@ -130,9 +140,9 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
         ad.employee_type AS employee_type,
         ad.status AS status,
         ep.pay_period,
-        ep.start_date,
-        ep.end_date,
-        ep.pay_day,
+        DATE_ADD(ep.start_date, INTERVAL 8 HOUR) AS start_date,
+        DATE_ADD(ep.end_date, INTERVAL 8 HOUR) AS end_date,
+        DATE_ADD(ep.pay_day, INTERVAL 8 HOUR) AS pay_day,
         ep.basic_pay,
         ep.total_earnings,
         ep.total_deductions,
@@ -152,8 +162,30 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
         const rows = await db.query(query, [employee_id, pay_period, pay_day]);
         const data = helper.emptyOrRows(rows);
 
+        const earningsQuery = `
+        SELECT type AS earning_type,
+            amount AS earning_amount,
+            DATE_ADD(date, INTERVAL 8 HOUR) AS earning_date
+        FROM employee_payroll_earnings
+        WHERE employee_id = ? AND date BETWEEN ? AND ?;`;
+
+        const earningsRows = await db.query(earningsQuery, [employee_id, data[0].start_date, data[0].end_date]);
+        const earningsData = helper.emptyOrRows(earningsRows);
+
+        const deductionsQuery = `
+        SELECT type AS deduction_type,
+            amount AS deduction_amount,
+            DATE_ADD(date, INTERVAL 8 HOUR) AS deduction_date
+        FROM employee_payroll_deductions
+        WHERE employee_id = ? AND date BETWEEN ? AND ?;`;
+
+        const deductionsRows = await db.query(deductionsQuery, [employee_id, data[0].start_date, data[0].end_date]);
+        const deductionsData = helper.emptyOrRows(deductionsRows);
+
         return {
-            data
+            data,
+            earningsData,
+            deductionsData
         };
 
     } catch (error) {
