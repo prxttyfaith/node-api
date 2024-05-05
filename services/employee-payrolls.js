@@ -46,6 +46,11 @@ async function createEmployeePayroll(payrolls) {
         const endDate = payrolls.payroll_end_date !== undefined ? payrolls.payroll_end_date : null;
         const payDay = payrolls.pay_day !== undefined ? payrolls.pay_day : null;
 
+        // console.log('Pay period:', payPeriod);
+        // console.log('Start date:', startDate);
+        // console.log('End date:', endDate);
+        // console.log('Pay day:', payDay);
+
         const deleteQuery = `
             DELETE FROM employee_payrolls WHERE pay_period = ? AND start_date = ? AND end_date = ? AND pay_day = ?;
         `;
@@ -98,7 +103,7 @@ async function createEmployeePayroll(payrolls) {
     }
 }
 
-async function getPayrollEmployees(pay_period, pay_day) {
+async function getPayrollsByEmployee(pay_period, pay_day) {
     // console.log(pay_day);
     try {
         const query = `
@@ -106,7 +111,14 @@ async function getPayrollEmployees(pay_period, pay_day) {
         CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
         des.designation_name AS designation,
         dep.department_name AS department,
-        ad.salary AS monthly_salary
+        ad.salary AS monthly_salary,
+        ep.basic_pay,
+        ep.pagibig,
+        ep.philhealth,
+        ep.sss,
+        ep.wh_tax,
+        ep.total_earnings AS addt_earnings,
+        ep.total_deductions AS deductions
         FROM employee_payrolls AS ep
         LEFT JOIN employee AS e ON ep.employee_id = e.id
         LEFT JOIN assigned_designation AS ad ON e.id = ad.employee_id
@@ -129,7 +141,7 @@ async function getPayrollEmployees(pay_period, pay_day) {
 }
 
 async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
-    console.log(pay_day);
+    console.log('Pay day:', pay_day);
 
     try {
         const query = `
@@ -162,14 +174,24 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
         const rows = await db.query(query, [employee_id, pay_period, pay_day]);
         const data = helper.emptyOrRows(rows);
 
+        if (data.length === 0) {
+            return { error: 'No payslip found for the requested data.' };
+        }
+
+        const startDate = new Date(data[0].start_date).toISOString().substring(0, 10);
+        const endDate = new Date(data[0].end_date).toISOString().substring(0, 10);
+        console.log('start_date:', startDate);
+        console.log('edn_date:', endDate);
+
         const earningsQuery = `
         SELECT type AS earning_type,
             amount AS earning_amount,
             DATE_ADD(date, INTERVAL 8 HOUR) AS earning_date
         FROM employee_payroll_earnings
-        WHERE employee_id = ? AND date BETWEEN ? AND ?;`;
+        WHERE employee_id = ? AND date BETWEEN ? AND ?
+        ORDER BY earning_date ASC;`;
 
-        const earningsRows = await db.query(earningsQuery, [employee_id, data[0].start_date, data[0].end_date]);
+        const earningsRows = await db.query(earningsQuery, [employee_id, startDate, endDate]);
         const earningsData = helper.emptyOrRows(earningsRows);
 
         const deductionsQuery = `
@@ -177,10 +199,15 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
             amount AS deduction_amount,
             DATE_ADD(date, INTERVAL 8 HOUR) AS deduction_date
         FROM employee_payroll_deductions
-        WHERE employee_id = ? AND date BETWEEN ? AND ?;`;
+        WHERE employee_id = ? AND date BETWEEN ? AND ?
+        ORDER BY deduction_date ASC;`;
 
-        const deductionsRows = await db.query(deductionsQuery, [employee_id, data[0].start_date, data[0].end_date]);
+        const deductionsRows = await db.query(deductionsQuery, [employee_id, startDate, endDate]);
         const deductionsData = helper.emptyOrRows(deductionsRows);
+
+        // console.log(data);
+        // console.log(earningsData);
+        // console.log(deductionsData);
 
         return {
             data,
@@ -195,11 +222,10 @@ async function getPayrollEmployeePayslip(employee_id, pay_period, pay_day) {
 }
 
 
-
 module.exports = {
     addEmployeeEarnings,
     addEmployeeDeductions,
     createEmployeePayroll,
-    getPayrollEmployees,
+    getPayrollsByEmployee,
     getPayrollEmployeePayslip
 }
