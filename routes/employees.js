@@ -11,6 +11,15 @@ router.get('/', async function(req, res, next) {
       next(err);
     }
   });
+  router.get('/employee-pays', async function(req, res, next) {
+    try {
+      res.json(await employees.getEmployeePays(req.query.page));
+    } catch (err) {
+      console.error(`Error while getting employee pays `, err.message);
+      next(err);
+    }
+  });
+
   
 
 /* POST employee */
@@ -18,7 +27,7 @@ router.post('/', async function(req, res, next) {
     try {
       res.json(await employees.createEmployee(req.body));
     } catch (err) {
-      console.error(`Error while creating employee`, err.message);
+      console.error(`Error while adding employee`, err.message);
       next(err);
     }
   });

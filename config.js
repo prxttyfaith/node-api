@@ -10,6 +10,7 @@ const config = {
       connectionLimit: 10,
       waitForConnections: true,
       queueLimit: 0,
+      dateStrings: true,
     },
     listPerPage: 10,
   };

@@ -6,7 +6,7 @@ const config = require('../config');
 async function getEmployees() {
   try {
     const query = `
-      SELECT e.*, ad.employee_type, ad.status, ad.designation_id, des.designation_name, d.department_name
+      SELECT e.*, ad.employee_type, ad.status, ad.salary, ad.designation_id, des.designation_name, d.department_name
       FROM employee e
       LEFT JOIN assigned_designation ad ON e.id = ad.employee_id
       LEFT JOIN designation des ON ad.designation_id = des.id
@@ -24,6 +24,27 @@ async function getEmployees() {
   }
 }
 
+//GET EMPLOYEE(concat name) AND GROSS PAY
+async function getEmployeePays() {
+  try {
+    const query = `
+      SELECT e.id AS employee_id, CONCAT(e.first_name, ' ', e.last_name) AS employee_name, ad.salary
+      FROM employee e
+      LEFT JOIN assigned_designation ad ON e.id = ad.employee_id`;
+
+    const rows = await db.query(query);
+    const data = helper.emptyOrRows(rows);
+
+    return {
+      data
+    };
+  } catch (error) {
+    console.error("Error fetching employee data:", error);
+    throw error;
+  }
+}
+
+
 //POST
 async function createEmployee(employee) {
   try {
@@ -39,7 +60,12 @@ async function createEmployee(employee) {
       zip_code: employee.zip_code || null,
       designation_id: employee.designation_id || null,
       employee_type: employee.employee_type || null,
-      status: employee.status || null
+      status: employee.status || null,
+      salary: employee.salary || null,
+      pagibig: employee.pagibig || null,
+      philhealth: employee.philhealth || null,
+      sss: employee.sss || null,
+      wh_tax: employee.wh_tax || null
     };
 
     // Insert into employee table
@@ -69,14 +95,19 @@ async function createEmployee(employee) {
     // Insert into assigned_designation table
     const designationQuery = `
           INSERT INTO assigned_designation 
-          (employee_id, designation_id, employee_type, status) 
-          VALUES (?, ?, ?, ?)`;
+          (employee_id, designation_id, employee_type, status, salary, pagibig, philhealth, sss, wh_tax) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const designationValues = [
       employeeId,
       employeeData.designation_id,
       employeeData.employee_type,
-      employeeData.status
+      employeeData.status,
+      employeeData.salary,
+      employeeData.pagibig,
+      employeeData.philhealth,
+      employeeData.sss,
+      employeeData.wh_tax
     ];
 
     // Finally, execute the query to insert the assigned designation
@@ -110,7 +141,12 @@ async function updateEmployee(employeeId, employee) {
       zip_code: employee.zip_code || null,
       designation_id: employee.designation_id || null,
       employee_type: employee.employee_type || null,
-      status: employee.status || null
+      status: employee.status || null,
+      salary: employee.salary || null,
+      pagibig: employee.pagibig || null,
+      philhealth: employee.philhealth || null,
+      sss: employee.sss || null,
+      wh_tax: employee.wh_tax || null
     };
 
     const employeeUpdateQuery = `
@@ -134,13 +170,18 @@ async function updateEmployee(employeeId, employee) {
 
     const designationUpdateQuery = `
     UPDATE assigned_designation
-    set designation_id = ?, employee_type = ?, status = ?
+    set designation_id = ?, employee_type = ?, status = ?, salary = ?, pagibig = ?, philhealth = ?, sss = ?, wh_tax = ?
     WHERE employee_id = ${employeeId}`;
 
     const designationUpdateValues = [
       employeeData.designation_id,
       employeeData.employee_type,
-      employeeData.status
+      employeeData.status,
+      employeeData.salary,
+      employeeData.pagibig,
+      employeeData.philhealth,
+      employeeData.sss,
+      employeeData.wh_tax
     ];
 
     const designationUpdateResult = await db.query(designationUpdateQuery, designationUpdateValues);
@@ -189,5 +230,6 @@ module.exports = {
   getEmployees,
   createEmployee,
   updateEmployee,
-  removeEmployee
+  removeEmployee,
+  getEmployeePays,
 }

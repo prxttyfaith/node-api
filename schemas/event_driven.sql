@@ -5,11 +5,12 @@ CREATE TABLE `assigned_designation` (
   `designation_id` int DEFAULT NULL,
   `employee_type` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
+  `gross_pay` float DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `employee_id` (`employee_id`),
   KEY `designation_id` (`designation_id`),
   CONSTRAINT `designation_id` FOREIGN KEY (`designation_id`) REFERENCES `designation` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Create syntax for TABLE 'department'
 CREATE TABLE `department` (
@@ -43,7 +44,7 @@ CREATE TABLE `employee` (
   `country` varchar(255) DEFAULT NULL,
   `zip_code` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1089 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Create syntax for TABLE 'employee_leave_requests'
 CREATE TABLE `employee_leave_requests` (
@@ -56,7 +57,51 @@ CREATE TABLE `employee_leave_requests` (
   PRIMARY KEY (`id`),
   KEY `employee_id` (`employee_id`),
   CONSTRAINT `employee_leave_requests_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create syntax for TABLE 'employee_payroll_deductions'
+CREATE TABLE `employee_payroll_deductions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `employee_payroll_deductions_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create syntax for TABLE 'employee_payroll_earnings'
+CREATE TABLE `employee_payroll_earnings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `amount` float DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `employee_payroll_earnings_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Create syntax for TABLE 'employee_payrolls'
+CREATE TABLE `employee_payrolls` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int NOT NULL,
+  `pay_period` date DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `gross_pay` float DEFAULT NULL,
+  `total_earnings` float DEFAULT NULL,
+  `total_deductions` float DEFAULT NULL,
+  `govt_sss` float DEFAULT NULL,
+  `govt_pagibig` float DEFAULT NULL,
+  `govt_philhealth` float DEFAULT NULL,
+  `govt_tin` float DEFAULT NULL,
+  `net_pay` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `employee_payrolls_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Create syntax for TABLE 'employee_signatories'
 CREATE TABLE `employee_signatories` (
@@ -69,7 +114,7 @@ CREATE TABLE `employee_signatories` (
   KEY `signatory` (`signatory`),
   CONSTRAINT `employee_signatories_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `employee_signatories_ibfk_2` FOREIGN KEY (`signatory`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Create syntax for TABLE 'tasks'
 CREATE TABLE `tasks` (
