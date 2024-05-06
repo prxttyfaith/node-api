@@ -35,19 +35,19 @@ router.post('/', async function(req, res, next) {
     }
 });
 
-// Endpoint: /employee-payrolls/employees
+// Endpoint: /employee-payrolls
 // Method: GET
 
-router.get('/employees', async (req, res) => {
+router.get('/', async (req, res) => {
     const pay_period = req.query.pay_period;
     const pay_day = req.query.pay_day;
     if (pay_period && pay_day) {
         try {
-            const result = await employeePayrolls.getPayrollEmployees(pay_period, pay_day);
+            const result = await employeePayrolls.getPayrollsByEmployee(pay_period, pay_day);
             res.status(200).json(result);
         } catch (error) {
-            console.error("Error fetching employee name list for payslip:", error);
-            res.status(500).json({ error: "Error fetching employee name list for payslip" });
+            console.error("Error fetching payrolls by employee:", error);
+            res.status(500).json({ error: "Error fetching payrolls by employee." });
         }
     } else {
         res.status(400).json({ error: "Missing required parameters" });
@@ -69,5 +69,6 @@ router.get('/payslip', async function(req, res, next) {
         next(err);
     }
 });
+
 
 module.exports = router;
